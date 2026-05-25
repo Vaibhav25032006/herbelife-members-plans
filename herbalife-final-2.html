@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Herbalife Smart Wellness Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange:#FF6B00; --orange-light:#FF8C35;
+    --green:#2ECC40;
+    --dark:#0D0D0D; --dark2:#1A1A1A; --dark3:#252525;
+    --card:#1E1E1E; --text:#F0F0F0; --muted:#888;
+    --border:rgba(255,107,0,0.2);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--dark);color:var(--text);font-family:'Poppins',sans-serif;min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;
+    background:radial-gradient(ellipse at 20% 20%,rgba(255,107,0,0.07) 0%,transparent 50%),
+               radial-gradient(ellipse at 80% 80%,rgba(46,204,64,0.05) 0%,transparent 50%);
+    animation:bgPulse 8s ease-in-out infinite alternate;pointer-events:none;z-index:0;}
+  @keyframes bgPulse{0%{transform:scale(1) rotate(0deg)}100%{transform:scale(1.1) rotate(3deg)}}
+  .container{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:0 20px 60px;}
+
+  .header{text-align:center;padding:40px 0 30px;animation:fadeDown 0.6s ease;}
+  .logo-ring{width:80px;height:80px;border-radius:50%;
+    background:linear-gradient(135deg,var(--orange),var(--orange-light));
+    display:flex;align-items:center;justify-content:center;margin:0 auto 16px;
+    box-shadow:0 0 30px rgba(255,107,0,0.4);font-size:36px;animation:logoPulse 3s ease infinite;}
+  @keyframes logoPulse{0%,100%{box-shadow:0 0 30px rgba(255,107,0,0.4)}50%{box-shadow:0 0 50px rgba(255,107,0,0.7)}}
+  .header h1{font-family:'Bebas Neue',cursive;font-size:2.4rem;letter-spacing:3px;
+    background:linear-gradient(135deg,#FF6B00,#FFB347);-webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+  .header p{color:var(--muted);font-size:0.82rem;letter-spacing:1.5px;text-transform:uppercase;margin-top:6px;}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;margin-bottom:16px;animation:fadeUp 0.5s ease both;}
+  .section-title{font-size:0.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--orange);
+    margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+  .section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+  .input-label{font-size:0.75rem;color:var(--muted);margin-bottom:8px;display:block;letter-spacing:0.5px;}
+  .input-field{width:100%;padding:14px 18px;background:var(--dark3);border:1.5px solid var(--border);
+    border-radius:12px;color:var(--text);font-family:'Poppins',sans-serif;font-size:1rem;letter-spacing:2px;
+    transition:all 0.3s ease;outline:none;}
+  .input-field:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,107,0,0.1);}
+  .input-field::placeholder{color:#444;letter-spacing:1px;}
+
+  .status-bar{display:none;padding:10px 16px;border-radius:10px;font-size:0.78rem;margin-top:12px;gap:8px;align-items:center;}
+  .status-bar.show{display:flex;}
+  .status-bar.info{background:rgba(52,152,219,0.1);border:1px solid rgba(52,152,219,0.3);color:#3498DB;}
+  .status-bar.success{background:rgba(46,204,64,0.1);border:1px solid rgba(46,204,64,0.3);color:var(--green);}
+  .status-bar.error{background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;}
+
+  .member-pill{display:none;align-items:center;gap:8px;padding:8px 16px;
+    background:rgba(46,204,64,0.08);border:1px solid rgba(46,204,64,0.25);
+    border-radius:30px;font-size:0.78rem;color:var(--green);margin-top:14px;}
+  .member-pill.show{display:flex;}
+  .pulse-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulseDot 1.5s ease infinite;}
+  @keyframes pulseDot{0%,100%{box-shadow:0 0 0 0 rgba(46,204,64,0.4)}50%{box-shadow:0 0 0 6px rgba(46,204,64,0)}}
+
+  .search-btn{width:100%;margin-top:14px;padding:13px;background:var(--dark3);
+    border:1.5px solid var(--orange);color:var(--orange);border-radius:12px;
+    font-family:'Poppins',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;
+    transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .search-btn:hover{background:rgba(255,107,0,0.1);}
+  .search-btn:disabled{opacity:0.35;cursor:not-allowed;}
+
+  .loading-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:100;
+    align-items:center;justify-content:center;flex-direction:column;gap:20px;backdrop-filter:blur(6px);}
+  .loading-overlay.show{display:flex;}
+  .spinner{width:60px;height:60px;border:3px solid rgba(255,107,0,0.2);border-top-color:var(--orange);
+    border-radius:50%;animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading-text{font-size:0.9rem;color:var(--muted);text-align:center;animation:textPulse 1.5s ease infinite;}
+  @keyframes textPulse{0%,100%{opacity:0.5}50%{opacity:1}}
+
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);
+    background:var(--dark3);border:1px solid var(--border);color:var(--text);
+    padding:12px 24px;border-radius:40px;font-size:0.85rem;z-index:200;
+    transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+    white-space:nowrap;box-shadow:0 10px 40px rgba(0,0,0,0.4);}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  .toast.error{border-color:#e74c3c;color:#e74c3c;}
+  .toast.success{border-color:var(--green);color:var(--green);}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="logo-ring">🌿</div>
+    <h1>Herbalife Wellness</h1>
+    <p>Smart Member Portal</p>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Member ID Enter Karein</div>
+    <label class="input-label">Apna 10 digit Member ID daalen</label>
+    <input type="text" class="input-field" id="member-id-text"
+           placeholder="e.g. 1234567890" maxlength="10"
+           oninput="onTextInput()" inputmode="numeric" />
+    <button class="search-btn" id="search-btn" onclick="lookupMember()" disabled>
+      🔍 Member Dhundho & Plan Dekho
+    </button>
+    <div id="text-status" class="status-bar"></div>
+    <div class="member-pill" id="member-pill">
+      <div class="pulse-dot"></div>
+      <span id="member-pill-text">Member ID ready</span>
+    </div>
+  </div>
+
+  <div id="result-card" style="display:none;"></div>
+
+</div>
+
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Loading...</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzjDdLvjd7yx7Nr-58JrfUhm6Zhm9QxhdU7N0ZYqKIXIZAww70V5LSIpB8SLuzLMC8P4Q/exec';
+
+const GOAL_URLS = {
+  'weight loss':     'https://herbalife-smart-wellness-studio.my.canva.site/page-21',
+  'weight loose':    'https://herbalife-smart-wellness-studio.my.canva.site/page-21',
+  'weight gain':     'https://herbalife-smart-wellness-studio.my.canva.site/page-22',
+  'healthy fitness': 'https://herbalife-smart-wellness-studio.my.canva.site/page-23',
+  'healthy living':  'https://herbalife-smart-wellness-studio.my.canva.site/page-23',
+  'muscle building': 'https://herbalife-smart-wellness-studio.my.canva.site/page-24',
+  'muscles building':'https://herbalife-smart-wellness-studio.my.canva.site/page-24',
+  'muscular body':   'https://herbalife-smart-wellness-studio.my.canva.site/page-24',
+};
+const GOAL_EMOJIS = {
+  'weight loss':'🔥','weight loose':'🔥','weight gain':'💪',
+  'healthy fitness':'🏃','healthy living':'🏃',
+  'muscle building':'🏋️','muscles building':'🏋️','muscular body':'🏋️'
+};
+
+let state = { memberId:'', goalUrl:'', goalLabel:'' };
+
+function onTextInput() {
+  const val = document.getElementById('member-id-text').value.trim();
+  state.memberId = val;
+  document.getElementById('search-btn').disabled = val.length < 10;
+  resetResult();
+  if(val.length >= 3) showMemberPill('ID: '+val); else hideMemberPill();
+}
+
+async function lookupMember() {
+  if(!state.memberId){ showToast('Pehle Member ID daalen','error'); return; }
+  resetResult();
+  try {
+    showLoading('🔍 Member dhundh raha hai...');
+    const r = await fetch(APPS_SCRIPT_URL + '?id=' + encodeURIComponent(state.memberId), {cache:'no-cache'});
+    const data = await r.json();
+    hideLoading();
+    showMemberResult(data);
+  } catch(e) {
+    hideLoading();
+    setStatus('error','Server se connect nahi ho saka. Dobara try karein.');
+    showToast('Connection error','error');
+  }
+}
+
+function showMemberResult(parsed) {
+  if(!parsed.found){
+    setStatus('error','Member ID "'+state.memberId+'" sheet mein nahi mili. ID check karein.');
+    showToast('Member nahi mila','error'); return;
+  }
+  const rawGoal = (parsed.goal||'').toLowerCase().trim();
+  const url = matchGoal(rawGoal);
+  if(!url){
+    setStatus('error','Member mila lekin goal "'+parsed.goal+'" pehchana nahi gaya.');
+    showToast('Goal match nahi hua','error'); return;
+  }
+  const emoji = matchGoalEmoji(rawGoal);
+  setStatus('success','Member mila! Goal: '+parsed.goal+' — redirect ho raha hai...');
+  showLoading(emoji+' '+parsed.goal+' page khul raha hai...');
+  showToast('Plan ready: '+parsed.goal,'success');
+  setTimeout(()=>{ hideLoading(); window.location.href=url; }, 1200);
+}
+
+function matchGoal(raw){ for(const k of Object.keys(GOAL_URLS)) if(raw.includes(k)) return GOAL_URLS[k]; return null; }
+function matchGoalEmoji(raw){ for(const k of Object.keys(GOAL_EMOJIS)) if(raw.includes(k)) return GOAL_EMOJIS[k]; return '🌿'; }
+
+function resetResult(){ document.getElementById('result-card').style.display='none'; }
+function showMemberPill(t){ document.getElementById('member-pill-text').textContent=t; document.getElementById('member-pill').classList.add('show'); }
+function hideMemberPill(){ document.getElementById('member-pill').classList.remove('show'); }
+function setStatus(type,msg){
+  const el=document.getElementById('text-status'); el.className='status-bar';
+  if(type&&msg){ el.classList.add('show',type); el.textContent=msg; }
+}
+function showLoading(t){ document.getElementById('loading-text').textContent=t; document.getElementById('loading').classList.add('show'); }
+function hideLoading(){ document.getElementById('loading').classList.remove('show'); }
+let toastTimer;
+function showToast(msg,type=''){
+  const t=document.getElementById('toast'); t.textContent=msg; t.className='toast '+type+' show';
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),3200);
+}
+</script>
+</body>
+</html>

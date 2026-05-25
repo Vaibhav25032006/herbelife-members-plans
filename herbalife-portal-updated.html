@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Herbalife Smart Wellness Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange:#FF6B00; --orange-light:#FF8C35;
+    --green:#2ECC40;
+    --dark:#0D0D0D; --dark2:#1A1A1A; --dark3:#252525;
+    --card:#1E1E1E; --text:#F0F0F0; --muted:#888;
+    --border:rgba(255,107,0,0.2);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--dark);color:var(--text);font-family:'Poppins',sans-serif;min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;
+    background:radial-gradient(ellipse at 20% 20%,rgba(255,107,0,0.07) 0%,transparent 50%),
+               radial-gradient(ellipse at 80% 80%,rgba(46,204,64,0.05) 0%,transparent 50%);
+    animation:bgPulse 8s ease-in-out infinite alternate;pointer-events:none;z-index:0;}
+  @keyframes bgPulse{0%{transform:scale(1) rotate(0deg)}100%{transform:scale(1.1) rotate(3deg)}}
+  .container{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:0 20px 60px;}
+
+  .header{text-align:center;padding:40px 0 30px;animation:fadeDown 0.6s ease;}
+  .logo-ring{width:80px;height:80px;border-radius:50%;
+    background:linear-gradient(135deg,var(--orange),var(--orange-light));
+    display:flex;align-items:center;justify-content:center;margin:0 auto 16px;
+    box-shadow:0 0 30px rgba(255,107,0,0.4);font-size:36px;animation:logoPulse 3s ease infinite;}
+  @keyframes logoPulse{0%,100%{box-shadow:0 0 30px rgba(255,107,0,0.4)}50%{box-shadow:0 0 50px rgba(255,107,0,0.7)}}
+  .header h1{font-family:'Bebas Neue',cursive;font-size:2.4rem;letter-spacing:3px;
+    background:linear-gradient(135deg,#FF6B00,#FFB347);-webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+  .header p{color:var(--muted);font-size:0.82rem;letter-spacing:1.5px;text-transform:uppercase;margin-top:6px;}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+  .card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;margin-bottom:16px;animation:fadeUp 0.5s ease both;}
+  .section-title{font-size:0.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--orange);
+    margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+  .section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+  .tab-switch{display:grid;grid-template-columns:1fr 1fr;background:var(--dark3);border-radius:12px;padding:4px;margin-bottom:20px;}
+  .tab-btn{padding:10px;border:none;border-radius:9px;background:transparent;color:var(--muted);
+    font-family:'Poppins',sans-serif;font-size:0.8rem;font-weight:500;cursor:pointer;transition:all 0.3s ease;
+    display:flex;align-items:center;justify-content:center;gap:6px;}
+  .tab-btn.active{background:linear-gradient(135deg,var(--orange),var(--orange-light));color:white;box-shadow:0 4px 15px rgba(255,107,0,0.3);}
+
+  .input-label{font-size:0.75rem;color:var(--muted);margin-bottom:8px;display:block;letter-spacing:0.5px;}
+  .input-field{width:100%;padding:14px 18px;background:var(--dark3);border:1.5px solid var(--border);
+    border-radius:12px;color:var(--text);font-family:'Poppins',sans-serif;font-size:1rem;letter-spacing:2px;
+    transition:all 0.3s ease;outline:none;}
+  .input-field:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,107,0,0.1);}
+  .input-field::placeholder{color:#444;letter-spacing:1px;}
+
+  .upload-zone{border:2px dashed var(--border);border-radius:16px;padding:36px 20px;text-align:center;
+    cursor:pointer;transition:all 0.3s ease;background:var(--dark3);position:relative;overflow:hidden;}
+  .upload-zone:hover,.upload-zone.dragover{border-color:var(--orange);background:rgba(255,107,0,0.05);}
+  .upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+  .upload-icon{font-size:2.5rem;margin-bottom:10px;}
+  .upload-zone h3{font-size:0.95rem;font-weight:600;margin-bottom:4px;}
+  .upload-zone p{font-size:0.75rem;color:var(--muted);}
+  .upload-hint{margin-top:10px;padding:8px 14px;background:rgba(46,204,64,0.1);border-radius:8px;
+    font-size:0.72rem;color:var(--green);border:1px solid rgba(46,204,64,0.2);}
+
+  .preview-wrap{margin-top:16px;border-radius:12px;overflow:hidden;display:none;position:relative;}
+  .preview-wrap.show{display:block;}
+  .preview-wrap img{width:100%;border-radius:12px;display:block;}
+  .preview-badge{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.7);color:var(--green);
+    font-size:0.7rem;padding:4px 10px;border-radius:20px;border:1px solid rgba(46,204,64,0.3);}
+
+  .detected-id{margin-top:14px;padding:14px 18px;background:rgba(46,204,64,0.08);
+    border:1.5px solid rgba(46,204,64,0.3);border-radius:12px;display:none;align-items:center;gap:12px;}
+  .detected-id.show{display:flex;}
+  .detected-id .id-icon{font-size:1.4rem;}
+  .detected-id .id-info small{font-size:0.68rem;color:var(--green);text-transform:uppercase;letter-spacing:1px;}
+  .detected-id .id-info strong{display:block;font-size:1.1rem;letter-spacing:3px;color:var(--green);font-weight:700;}
+
+  .status-bar{display:none;padding:10px 16px;border-radius:10px;font-size:0.78rem;margin-top:12px;gap:8px;align-items:center;}
+  .status-bar.show{display:flex;}
+  .status-bar.info{background:rgba(52,152,219,0.1);border:1px solid rgba(52,152,219,0.3);color:#3498DB;}
+  .status-bar.success{background:rgba(46,204,64,0.1);border:1px solid rgba(46,204,64,0.3);color:var(--green);}
+  .status-bar.error{background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;}
+
+  .member-pill{display:none;align-items:center;gap:8px;padding:8px 16px;
+    background:rgba(46,204,64,0.08);border:1px solid rgba(46,204,64,0.25);
+    border-radius:30px;font-size:0.78rem;color:var(--green);margin-top:14px;}
+  .member-pill.show{display:flex;}
+  .pulse-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulseDot 1.5s ease infinite;}
+  @keyframes pulseDot{0%,100%{box-shadow:0 0 0 0 rgba(46,204,64,0.4)}50%{box-shadow:0 0 0 6px rgba(46,204,64,0)}}
+
+  .search-btn{width:100%;margin-top:14px;padding:13px;background:var(--dark3);
+    border:1.5px solid var(--orange);color:var(--orange);border-radius:12px;
+    font-family:'Poppins',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;
+    transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .search-btn:hover{background:rgba(255,107,0,0.1);}
+  .search-btn:disabled{opacity:0.35;cursor:not-allowed;}
+
+  /* Result card */
+  .goal-result-label{font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;}
+  .goal-chip{display:inline-flex;align-items:center;gap:10px;padding:10px 20px;border-radius:30px;
+    font-size:1rem;font-weight:700;margin-bottom:16px;}
+  .goal-chip.weight-loss{background:rgba(255,107,0,0.15);border:2px solid var(--orange);color:var(--orange);}
+  .goal-chip.weight-gain{background:rgba(46,204,64,0.15);border:2px solid var(--green);color:var(--green);}
+  .goal-chip.healthy-fitness{background:rgba(52,152,219,0.15);border:2px solid #3498DB;color:#3498DB;}
+  .goal-chip.muscle-building{background:rgba(155,89,182,0.15);border:2px solid #9B59B6;color:#9B59B6;}
+  .goal-chip.not-found{background:rgba(231,76,60,0.15);border:2px solid #e74c3c;color:#e74c3c;}
+
+  .cta-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--orange),var(--orange-light));
+    color:white;border:none;border-radius:14px;font-family:'Poppins',sans-serif;font-size:1rem;
+    font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.3s ease;
+    box-shadow:0 6px 25px rgba(255,107,0,0.35);}
+  .cta-btn:hover{transform:translateY(-2px);box-shadow:0 10px 35px rgba(255,107,0,0.5);}
+  .cta-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none;}
+
+  .loading-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:100;
+    align-items:center;justify-content:center;flex-direction:column;gap:20px;backdrop-filter:blur(6px);}
+  .loading-overlay.show{display:flex;}
+  .spinner{width:60px;height:60px;border:3px solid rgba(255,107,0,0.2);border-top-color:var(--orange);
+    border-radius:50%;animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading-text{font-size:0.9rem;color:var(--muted);text-align:center;animation:textPulse 1.5s ease infinite;}
+  @keyframes textPulse{0%,100%{opacity:0.5}50%{opacity:1}}
+
+  .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);
+    background:var(--dark3);border:1px solid var(--border);color:var(--text);
+    padding:12px 24px;border-radius:40px;font-size:0.85rem;z-index:200;
+    transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+    white-space:nowrap;box-shadow:0 10px 40px rgba(0,0,0,0.4);}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  .toast.error{border-color:#e74c3c;color:#e74c3c;}
+  .toast.success{border-color:var(--green);color:var(--green);}
+
+  .tab-content{display:none;}
+  .tab-content.active{display:block;}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="logo-ring">🌿</div>
+    <h1>Herbalife Wellness</h1>
+    <p>Smart Member Portal</p>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="card">
+    <div class="section-title">Member ID Enter Karein</div>
+
+    <div class="tab-switch">
+      <button class="tab-btn active" onclick="switchTab('text')">⌨️ Type ID</button>
+      <button class="tab-btn"        onclick="switchTab('image')">📸 ID Card</button>
+    </div>
+
+    <!-- Text Tab -->
+    <div id="tab-text" class="tab-content active">
+      <label class="input-label">Apna Member ID number daalen</label>
+      <input type="text" class="input-field" id="member-id-text"
+             placeholder="e.g. 123456789" maxlength="20"
+             oninput="onTextInput()" />
+      <button class="search-btn" id="search-btn-text" onclick="lookupMember()" disabled>
+        🔍 Member Dhundho &amp; Plan Dekho
+      </button>
+      <div id="text-status" class="status-bar"></div>
+    </div>
+
+    <!-- Image Tab -->
+    <div id="tab-image" class="tab-content">
+      <div class="upload-zone" id="upload-zone">
+        <input type="file" accept="image/*" id="id-card-input" onchange="handleImageUpload(event)" />
+        <div class="upload-icon">🪪</div>
+        <h3>ID Card Upload Karein</h3>
+        <p>Apni Herbalife Member ID card ki photo select karein</p>
+        <div class="upload-hint">🔍 AI automatically Member ID detect karega</div>
+      </div>
+      <div class="preview-wrap" id="preview-wrap">
+        <img id="preview-img" src="" alt="ID Card" />
+        <span class="preview-badge">✓ Uploaded</span>
+      </div>
+      <div class="detected-id" id="detected-id">
+        <span class="id-icon">🆔</span>
+        <div class="id-info">
+          <small>Member ID Detected</small>
+          <strong id="detected-id-value">—</strong>
+        </div>
+      </div>
+      <button class="search-btn" id="search-btn-image" onclick="lookupMember()" disabled>
+        🔍 Member Dhundho &amp; Plan Dekho
+      </button>
+      <div id="image-status" class="status-bar"></div>
+    </div>
+
+    <div class="member-pill" id="member-pill">
+      <div class="pulse-dot"></div>
+      <span id="member-pill-text">Member ID ready</span>
+    </div>
+  </div>
+
+  <!-- Result Card hidden - auto-redirect enabled -->
+  <div id="result-card" style="display:none;">
+    <div class="goal-chip" id="goal-chip">—</div>
+    <div id="goal-desc"></div>
+  </div>
+
+</div>
+
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Loading...</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const SHEET_ID = '1krG5NFJ2Uo2tP90fgh9ZeuIJRN80GRkcbik63KXX2Es';
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&gid=0';
+// ✅ Apna Apps Script URL yahan paste karo:
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxTAAwsaYlJTyuYUJBSGoDFtUig-_qQlurCc2gN40t-WGdEgWDtzZ3J9Q3VscwgpE2YyA/exec';
+
+const GOAL_URLS = {
+  'weight loss':     'https://herbalife-smart-wellness-studio.my.canva.site/page-21',
+  'weight loose':    'https://herbalife-smart-wellness-studio.my.canva.site/page-21',
+  'weight gain':     'https://herbalife-smart-wellness-studio.my.canva.site/page-22',
+  'healthy fitness': 'https://herbalife-smart-wellness-studio.my.canva.site/page-23',
+  'muscle building': 'https://herbalife-smart-wellness-studio.my.canva.site/page-24',
+  'muscles building':'https://herbalife-smart-wellness-studio.my.canva.site/page-24',
+};
+const GOAL_EMOJIS = {
+  'weight loss':'🔥','weight loose':'🔥','weight gain':'💪',
+  'healthy fitness':'🏃','muscle building':'🏋️','muscles building':'🏋️'
+};
+const GOAL_CSS = {
+  'weight loss':'weight-loss','weight loose':'weight-loss','weight gain':'weight-gain',
+  'healthy fitness':'healthy-fitness','muscle building':'muscle-building','muscles building':'muscle-building'
+};
+
+let state = { tab:'text', memberId:'', goalUrl:'', goalLabel:'' };
+
+function switchTab(tab) {
+  state.tab = tab; state.memberId = '';
+  resetResult(); hideMemberPill();
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active',(i===0&&tab==='text')||(i===1&&tab==='image'));
+  });
+  document.getElementById('tab-text').classList.toggle('active', tab==='text');
+  document.getElementById('tab-image').classList.toggle('active', tab==='image');
+  if(tab==='text'){
+    document.getElementById('member-id-text').value='';
+    setStatus('text-status','','');
+    document.getElementById('search-btn-text').disabled=true;
+  }
+}
+
+function onTextInput() {
+  const val = document.getElementById('member-id-text').value.trim();
+  state.memberId = val;
+  document.getElementById('search-btn-text').disabled = val.length < 3;
+  resetResult();
+  if(val.length>=3) showMemberPill('ID: '+val); else hideMemberPill();
+}
+
+function handleImageUpload(e) {
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = async(ev)=>{
+    const dataUrl=ev.target.result; const base64=dataUrl.split(',')[1];
+    const mtype=file.type||'image/jpeg';
+    document.getElementById('preview-img').src=dataUrl;
+    document.getElementById('preview-wrap').classList.add('show');
+    document.getElementById('detected-id').classList.remove('show');
+    document.getElementById('search-btn-image').disabled=true;
+    resetResult();
+    await extractIdFromImage(base64, mtype);
+  };
+  reader.readAsDataURL(file);
+}
+
+async function extractIdFromImage(base64, mediaType) {
+  showLoading('🔍 AI aapki ID card padh raha hai...');
+  setStatus('image-status','info','Detecting Member ID...');
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:300,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:mediaType,data:base64}},
+          {type:'text',text:'This is a Herbalife Member ID card. Find the Member ID number printed in large GREEN bold digits below the "Member ID" label. Reply ONLY with JSON no markdown: {"memberId":"DIGITS","found":true} or {"memberId":"","found":false}'}
+        ]}]
+      })
+    });
+    const data=await res.json();
+    const raw=data.content.map(b=>b.text||'').join('').trim();
+    let parsed; try{parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch{throw new Error('parse');}
+    hideLoading();
+    if(parsed.found&&parsed.memberId){
+      state.memberId=parsed.memberId;
+      document.getElementById('detected-id-value').textContent=parsed.memberId;
+      document.getElementById('detected-id').classList.add('show');
+      document.getElementById('search-btn-image').disabled=false;
+      setStatus('image-status','success','Member ID mili: '+parsed.memberId);
+      showMemberPill('ID: '+parsed.memberId);
+      showToast('Member ID detect ho gayi!','success');
+    } else {
+      setStatus('image-status','error','ID nahi mili. Manually type karein.');
+      showToast('ID detect nahi hui','error');
+    }
+  } catch(err){
+    hideLoading();
+    setStatus('image-status','error','Image analyse nahi ho saki. Dobara try karein.');
+    showToast('Error reading image','error');
+  }
+}
+
+async function lookupMember() {
+  if(!state.memberId){showToast('Pehle Member ID daalen','error');return;}
+  resetResult();
+  const sid = state.tab==='text'?'text-status':'image-status';
+
+  // === APPS SCRIPT API (primary - always works) ===
+  if(APPS_SCRIPT_URL && APPS_SCRIPT_URL !== 'YAHAN_APNA_SCRIPT_URL_PASTE_KARO') {
+    try {
+      showLoading('🔍 Member dhundh raha hai...');
+      const r = await fetch(APPS_SCRIPT_URL + '?id=' + encodeURIComponent(state.memberId), {cache:'no-cache'});
+      const data = await r.json();
+      hideLoading();
+      showMemberResult(data);
+      return;
+    } catch(e) { hideLoading(); }
+  }
+
+  // === FALLBACK: Claude AI API ===
+  try {
+    showLoading('🤖 AI se dhundh raha hai...');
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:400,
+        tools:[{type:'web_search_20250305',name:'web_search'}],
+        messages:[{role:'user',content:
+          'Read this Google Sheet CSV: ' + SHEET_CSV_URL +
+          '\nFind row with Member ID "' + state.memberId + '" and return Column K value (goal).' +
+          '\nReply ONLY JSON: {"found":true,"memberId":"' + state.memberId + '","goal":"GOAL"} or {"found":false,"memberId":"' + state.memberId + '","goal":""}'
+        }]
+      })
+    });
+    const data = await res.json();
+    const txt = data.content.map(b=>b.text||'').join('');
+    const m = txt.match(/\{[\s\S]*?"found"[\s\S]*?\}/);
+    if(m){ hideLoading(); showMemberResult(JSON.parse(m[0])); return; }
+  } catch(e) { hideLoading(); }
+
+  // === Dono fail hua ===
+  hideLoading();
+  setStatus(sid,'error','Apps Script URL set karein — setup guide dekho.');
+  showToast('Setup incomplete — niche guide dekho','error');
+}
+
+function parseCSVForMember(csvText, memberId) {
+  const rows = csvText.trim().split('\n').map(r=>parseCSVRow(r));
+  const searchId = memberId.trim();
+  for(let i=0;i<rows.length;i++){
+    for(let c=0;c<rows[i].length;c++){
+      const cell = rows[i][c].trim().replace(/"/g,'');
+      if(cell===searchId){
+        const goal = rows[i][10]?rows[i][10].trim().replace(/"/g,''):'';
+        return {found:true,memberId:searchId,goal};
+      }
+    }
+  }
+  return {found:false,memberId:searchId,goal:''};
+}
+
+function parseCSVRow(row){
+  const result=[]; let cur=''; let inQ=false;
+  for(let i=0;i<row.length;i++){
+    const ch=row[i];
+    if(ch==='"'){inQ=!inQ;}
+    else if(ch===','&&!inQ){result.push(cur);cur='';}
+    else{cur+=ch;}
+  }
+  result.push(cur); return result;
+}
+
+function showMemberResult(parsed) {
+  const statusId = state.tab==='text'?'text-status':'image-status';
+  if(!parsed.found){
+    setStatus(statusId,'error','Member ID "'+state.memberId+'" sheet mein nahi mili. ID check karein.');
+    showToast('Member nahi mila sheet mein','error'); return;
+  }
+  const rawGoal=(parsed.goal||'').toLowerCase().trim();
+  const url=matchGoal(rawGoal);
+  if(!url){
+    setStatus(statusId,'error','Member mila lekin goal "'+parsed.goal+'" pehchana nahi gaya. Sheet check karein.');
+    showToast('Goal match nahi hua','error'); return;
+  }
+  // ✅ Auto-redirect: seedha goal page pe bhejo, koi button nahi
+  state.goalUrl=url; state.goalLabel=parsed.goal;
+  const emoji=matchGoalEmoji(rawGoal);
+  setStatus(statusId,'success','Member mila! Goal: '+parsed.goal+' — redirect ho raha hai...');
+  showLoading(emoji+' '+parsed.goal+' page khul raha hai...');
+  showToast('Plan ready: '+parsed.goal,'success');
+  setTimeout(()=>{ hideLoading(); window.location.href=url; }, 1200);
+}
+
+function matchGoal(raw){for(const k of Object.keys(GOAL_URLS))if(raw.includes(k))return GOAL_URLS[k];return null;}
+function matchGoalCss(raw){for(const k of Object.keys(GOAL_CSS))if(raw.includes(k))return GOAL_CSS[k];return '';}
+function matchGoalEmoji(raw){for(const k of Object.keys(GOAL_EMOJIS))if(raw.includes(k))return GOAL_EMOJIS[k];return '🌿';}
+
+function openPlan(){
+  if(!state.goalUrl)return;
+  showLoading('🚀 Plan khul raha hai...');
+  setTimeout(()=>{hideLoading();window.open(state.goalUrl,'_blank');},800);
+}
+
+function resetResult(){
+  document.getElementById('result-card').style.display='none';
+  state.goalUrl='';state.goalLabel='';
+}
+function showMemberPill(t){
+  document.getElementById('member-pill-text').textContent=t;
+  document.getElementById('member-pill').classList.add('show');
+}
+function hideMemberPill(){document.getElementById('member-pill').classList.remove('show');}
+function setStatus(id,type,msg){
+  const el=document.getElementById(id); el.className='status-bar';
+  if(type&&msg){el.classList.add('show',type);el.textContent=msg;}
+}
+function showLoading(t){document.getElementById('loading-text').textContent=t;document.getElementById('loading').classList.add('show');}
+function hideLoading(){document.getElementById('loading').classList.remove('show');}
+let toastTimer;
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type+' show';
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),3200);
+}
+const zone=document.getElementById('upload-zone');
+zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('dragover');});
+zone.addEventListener('dragleave',()=>zone.classList.remove('dragover'));
+zone.addEventListener('drop',e=>{
+  e.preventDefault();zone.classList.remove('dragover');
+  const file=e.dataTransfer.files[0];
+  if(file&&file.type.startsWith('image/')){
+    const inp=document.getElementById('id-card-input');
+    const dt=new DataTransfer();dt.items.add(file);inp.files=dt.files;
+    handleImageUpload({target:{files:[file]}});
+  }
+});
+</script>
+</body>
+</html>
